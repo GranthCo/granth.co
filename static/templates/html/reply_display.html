@@ -1,0 +1,128 @@
+<<<define "title" >>>
+
+<<< with index .Lines 0>>> <<< .Section >>> | <<< end >>>
+
+<<< end >>>
+
+
+
+<<<define "content" >>>
+
+<div class="col-md-12 column">
+
+	<!-- Pagination Controller -->
+	<div ng-controller="PaginationController2" ng-init="setPage(<<<  with index .Lines 0   >>> <<< .Page >>> <<< end >>>)">
+		<center><pagination on-select-page="pageChanged(page)" total-items="totalItems" page="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages" items-per-page="itemsPerPage"></pagination></center>
+	</div>
+
+	<!-- Top row buttons -->
+	<div ng-controller="LanguageController">
+	    <script type="text/ng-template" id="myModalContent.html">
+	        <div class="modal-header">
+	            <h5>Select from</h5>
+	        </div>
+	        <div class="modal-body">
+
+
+	        	<div ng-repeat="language in languages">
+				  <div><input
+				    type="checkbox"
+				    name="language"
+				    value="language"
+				    ng-checked="languageSelection.indexOf(language) > -1"
+				    ng-click="toggleSelection(language)"
+				  > {{language}} 
+				</div></div>
+	         
+	        </div>
+	        <div class="modal-footer">
+	            <button class="btn btn-primary" ng-click="ok()">OK</button>
+	            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	        </div>
+	    </script>    
+	</div>
+
+
+	<button type="button" class="btn btn-primary" ng-model="transliteration" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+		Transliteration (English)
+	</button>
+
+
+	<button type="button" class="btn btn-primary" ng-model="gurmukhi" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+		Gurmukhi 
+	</button>
+
+	<button type="button" class="btn btn-primary" ng-model="translation" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+		Translation 
+	</button>
+
+	<button class="btn btn-primary" ng-controller="LanguageController" ng-click="open()">
+		Choose Language
+	</button>
+	<!--
+	<button class="btn btn-default pull-right">
+		<a href="/" >HOME</a>
+	</button>-->
+
+	<hr>
+
+
+
+	<table class="table table-bordered table-striped table-hover " >
+		<<< range .Lines >>>
+		<tr  ng-click="isCollapsed<<< .ScriptureId>>> = !isCollapsed<<< .ScriptureId>>>" >
+
+
+			<td style="vertical-align:middle;">
+				<div ng-if="!gurmukhi"> 
+					<h2>  <<< .Scripture >>> </h2> </br>
+				</div>
+				<div ng-if="transliteration"> 
+					<div>
+						
+						<<< range .Transliteration >>>
+						<div>
+								<h3><<< . >>></h3>
+						</div>
+						<<< end >>>
+					
+					</div>
+				</div>							
+				
+				<div ng-if="!translation"> 
+					<ul>
+					<<< range .Translation >>>
+					<div>
+							<li><h4><<< . >>></h4></li>
+					</div>
+					<<< end >>>
+					</ul>
+				</div>
+				<div collapse="!isCollapsed<<< .ScriptureId>>>">
+					<div >
+						<button type="button" class="btn btn-success" ng-click="shabadChanged(<<< .Hymn >>>)">Full Shabad (Hymn)</button> 
+						<button type="button" class="btn btn-success" ng-click="lineChanged(<<< .ScriptureId >>>)">Go To Line <<< .ScriptureId >>> </button> 
+						<button type="button" class="btn btn-success" ng-click="pageChanged(<<< .Page >>>)">Go To Page <<< .Page >>> </button>
+					</div> 
+					<div>
+						<<< .Hymn >>> <<< .Section>>>
+					</div>
+				</div>
+
+				</td>
+
+				<td style="vertical-align:middle;" >
+					  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': isCollapsed<<< .ScriptureId>>>, 'glyphicon-chevron-right': !isCollapsed<<< .ScriptureId>>>}"></i>
+
+				</td>
+			</tr>
+			<<< end >>>
+		</table>
+	</div>
+		<!-- Pagination Controller -->
+	<center><div ng-controller="PaginationController2" ng-init="setPage(<<<  with index .Lines 0   >>> <<< .Page >>> <<< end >>>)">
+		<pagination on-select-page="pageChanged(page)" total-items="totalItems" page="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages" items-per-page="itemsPerPage"></pagination></center>
+	</div>
+</div>
+
+<<<end>>>

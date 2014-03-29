@@ -1,0 +1,58 @@
+
+<html ng-app>
+<head> <title> Angular </title> 
+
+
+
+</head>
+
+<body>
+
+	<h1> Hi </h1>
+
+	<div>
+		search: <input type="text" ng-model="searchText" />
+		{{ searchText }}
+		<br />
+
+	</div>
+
+	<div class="container" ng-controller="SimpleController">
+		<ul>
+			<li ng-repeat="name in customers | filter:searchText ">{{ name.Content }} </li>
+		</ul>
+
+	</div>
+	<script src="scripts/angular.min.js"> </script>
+
+	<script>
+	var demoApp = angular.module("dmo", []);
+
+
+	function SimpleController($scope, $http) {
+
+		$http({method: 'GET', url: '/'}).
+		  success(function(data, status, headers, config) {
+		    // this callback will be called asynchronously
+		    // when the response is available
+		    $scope.customers = data
+		  }).
+		  error(function(data, status, headers, config) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		    alert("some error" + data + status);
+
+		  });                 
+	}
+
+
+
+
+	</script>
+
+
+
+</body>
+
+
+</html>

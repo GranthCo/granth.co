@@ -1,0 +1,37 @@
+{
+	"ImportPath": "github.com/GranthCo/granth.co",
+	"GoVersion": "go1.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "go1",
+			"Rev": "9a7aa3606b82e2081a13a008ada88dfdb96c20fd"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "a08edd30ad9e104612741163dc087a613829a23c"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "9ede152210fa25c1377d33e867cb828c19316445"
+		},
+		{
+			"ImportPath": "github.com/russross/blackfriday",
+			"Comment": "v1.1-54-ge078bb8",
+			"Rev": "e078bb8ec34db7cc285f347d24f367b95c909ece"
+		},
+		{
+			"ImportPath": "github.com/yvasiyarov/go-metrics",
+			"Rev": "b23f8b043b6492e7aef34eb11aab268a5c89c14b"
+		},
+		{
+			"ImportPath": "github.com/yvasiyarov/gorelic",
+			"Comment": "v0.0.4",
+			"Rev": "b537cedaed74a12ba50ea25074705e275da7aa7e"
+		},
+		{
+			"ImportPath": "github.com/yvasiyarov/newrelic_platform_go",
+			"Rev": "2d5b3d6e6db42e361ca5a5b6376a1368f7067236"
+		}
+	]
+}

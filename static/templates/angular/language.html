@@ -1,0 +1,29 @@
+
+enn
+
+    {{ pagenumber }}
+    <table class="table table-striped table-condensed table-responsive" >
+        <tr ng-repeat="line in page" class="table-hover" >
+
+            <td >
+                :
+            </td>
+            <td >
+                {{ line.Original }}
+            </td>
+            <td>
+                {{ line.Translated }}
+            </td>
+         </tr>
+
+
+    </table>
+
+
+
+    
+                <ul class="pagination" ng-controller="PaginationController" >
+                    <li ng-repeat="p in list">
+                        <a href="#"> {{ p }} </a>
+                    </li>
+                </ul>

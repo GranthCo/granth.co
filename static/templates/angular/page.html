@@ -1,0 +1,52 @@
+
+    <button type="button" class="btn btn-primary" ng-model="transliteration" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+        Transliteration (English)
+    </button>
+
+
+    <button type="button" class="btn btn-primary" ng-model="gurmukhi" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+        Gurmukhi 
+    </button>
+    <hr>
+
+
+    <center>    Click Lines to reveal options</center>
+    <hr>
+
+    <table class="table table-striped table-hover table-condensed" >
+        <tr ng-repeat="line in reply.Lines"  class="info" ng-click="isCollapsed = !isCollapsed" >
+
+            <td style="vertical-align:middle;" ng-controller="DropdownController">
+                    <h2 class="lead"> {{ line.Line }} </h2>
+            </td>
+                
+            <td tyle="vertical-align:middle;">
+                <div ng-if="!gurmukhi"> 
+                    <h2> {{ line.Scripture }} </h2> </br>
+                </div>
+                
+                <div collapse="!isCollapsed">
+                    <div >
+                        <button type="button" class="btn btn-success" ng-click="shabadChanged(line.Hymn)">Full Shabad (Hymn)</button> 
+                        <button type="button" class="btn btn-success" ng-click="lineChanged(line.ScriptureId)">Line {{line.ScriptureId}} </button> 
+                        <button type="button" class="btn btn-success" ng-click="pageChanged(line.Page)">Page {{line.Page}} </button>
+                    </div> 
+                </div>
+            
+
+
+                <div ng-if="transliteration"> 
+                    <h4> {{ line.Transliteration[0] }} </h3></br>
+                </div>
+
+
+                <div data-ng-repeat="t in line.Translation">
+                    <h4>{{ t }} </h4></br>
+                </div>
+
+                
+            </td>
+         </tr>
+
+
+    </table>
