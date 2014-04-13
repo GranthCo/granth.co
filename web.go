@@ -123,11 +123,10 @@ type Line struct {
 type RequestType int
 
 const ( // iota is reset to 0
-	RequestPage    RequestType = iota
-	RequestHymn    RequestType = iota
-	RequestLine    RequestType = iota
-	RequestSection RequestType = iota
-	RequestSearch  RequestType = iota
+	RequestPage    RequestType = iota // c0 == 0
+	RequestHymn    RequestType = iota // c1 == 1
+	RequestLine    RequestType = iota // c2 == 2
+	RequestSection RequestType = iota // c2 == 2
 )
 
 // This can be a page reply, shabad reply, etc
@@ -171,7 +170,7 @@ func doQuery(q string) (*sql.Rows, error) {
 
 func queryBuilder(translationLanguages []string,
 	transliterationLanguages []string, page string, hymn string,
-	lineBegin string, lineEnd string, melodyId string, searchText string,
+	lineBegin string, lineEnd string, melodyId string,
 	requestType RequestType) string {
 
 	// TODO: check arguments
@@ -188,8 +187,6 @@ func queryBuilder(translationLanguages []string,
 		}
 	}
 
-	fmt.Println("Building query with request type ", requestType)
-
 	if len(tLangs) == 0 {
 		tLangs = append(tLangs, fmt.Sprintf("translation.language_id = %s", languageTranslation["english"]))
 	}
@@ -200,9 +197,6 @@ func queryBuilder(translationLanguages []string,
 
 	// build up the content, default it to page 1
 	request := "scripture.page = 1"
-
-	// future pagination?
-	limitString := ""
 
 	switch requestType {
 	case RequestPage:
@@ -217,37 +211,32 @@ func queryBuilder(translationLanguages []string,
 		break
 	case RequestSection:
 		request = fmt.Sprintf("scripture.melody_id = %s", melodyId)
-		break
-	case RequestSearch:
-		request = fmt.Sprintf("match(translation.text) against (\" %s \")", searchText)
-		limitString = "limit 50"
 	}
 
-	query := fmt.Sprintf("select %s from %s where %s and %s and %s order by scripture.id asc %s;",
-		base, tables, translationBase, transliterationBase, request, limitString)
+	query := fmt.Sprintf("select %s from %s where %s and %s and %s order by scripture.id asc;",
+		base, tables, translationBase, transliterationBase, request)
 
 	return query
 }
 
 func executeQuery(translationLanguages []string,
 	transliterationLanguages []string, page string, hymn string,
-	lineBegin string, lineEnd string, melodyId string, searchText string,
+	lineBegin string, lineEnd string, melodyId string,
 	requestType RequestType) (*sql.Rows, error) {
 
-	return doQuery(queryBuilder(translationLanguages,
-		transliterationLanguages, page, hymn, lineBegin, lineEnd, melodyId,
-		searchText, requestType))
+	return doQuery(queryBuilder(translationLanguages, transliterationLanguages, page,
+		hymn, lineBegin, lineEnd, melodyId, requestType))
 }
 
 func request(translationLanguages []string,
 	transliterationLanguages []string, page string, hymn string,
-	lineBegin string, lineEnd string, melodyId string, searchText string,
+	lineBegin string, lineEnd string, melodyId string,
 	requestType RequestType) Reply {
 
 	var reply Reply
 
 	rows, err := executeQuery(translationLanguages, transliterationLanguages,
-		page, hymn, lineBegin, lineEnd, melodyId, searchText, requestType)
+		page, hymn, lineBegin, lineEnd, melodyId, requestType)
 
 	if err != nil {
 		fmt.Println("Error executing the requst", err)
@@ -325,7 +314,7 @@ func reduceReply(r Reply) Reply {
 func requestPage(translationLanguages []string,
 	transliterationLanguages []string, page string) Reply {
 	return request(translationLanguages, transliterationLanguages, page, "0",
-		"0", "0", "0", "0", RequestPage)
+		"0", "0", "0", RequestPage)
 }
 
 func requestReducedPage(translationLanguages []string,
@@ -336,13 +325,13 @@ func requestReducedPage(translationLanguages []string,
 func requestLines(translationLanguages []string,
 	transliterationLanguages []string, begin string, end string) Reply {
 	return request(translationLanguages, transliterationLanguages, "0", "0",
-		begin, end, "0", "0", RequestLine)
+		begin, end, "0", RequestLine)
 }
 
 func requestHymn(translationLanguages []string,
 	transliterationLanguages []string, hymn string) Reply {
 	return request(translationLanguages, transliterationLanguages, "0", hymn,
-		"0", "0", "0", "0", RequestHymn)
+		"0", "0", "0", RequestHymn)
 }
 
 func requestReducedHymn(translationLanguages []string,
@@ -353,13 +342,7 @@ func requestReducedHymn(translationLanguages []string,
 func requestSection(translationLanguages []string,
 	transliterationLanguages []string, section string) Reply {
 	return request(translationLanguages, transliterationLanguages, "0", "0",
-		"0", "0", section, "0", RequestSection)
-}
-
-func requestSearch(translationLanguages []string,
-	transliterationLanguages []string, searchText string) Reply {
-	return request(translationLanguages, transliterationLanguages, "0", "0",
-		"0", "0", "0", searchText, RequestSearch)
+		"0", "0", section, RequestSection)
 }
 
 func printReply(res http.ResponseWriter, r Reply) {
@@ -472,15 +455,6 @@ func reducedPageHandlerBase(req *http.Request) Reply {
 	return r
 }
 
-func searchHandlerBase(req *http.Request) Reply {
-	vars := mux.Vars(req)
-	searchText := vars["searchText"]
-	fmt.Println("Search text is ", searchText)
-	splitLangs := prepareLanguageString(req.URL.Query())
-	r := requestSearch(splitLangs, []string{}, searchText)
-	return r
-}
-
 //
 // Handler Rest
 //
@@ -525,10 +499,6 @@ func pageHandler(res http.ResponseWriter, req *http.Request) {
 
 func reducedPageHandler(res http.ResponseWriter, req *http.Request) {
 	returnHtmlreply(res, "reply_display", reducedPageHandlerBase(req))
-}
-
-func searchHandler(res http.ResponseWriter, req *http.Request) {
-	returnHtmlreply(res, "reply_display", searchHandlerBase(req))
 }
 
 func aboutHandler(res http.ResponseWriter, req *http.Request) {
@@ -609,7 +579,6 @@ func setupRoutes() *mux.Router {
 	r.HandleFunc("/about", aboutHandler)
 	r.HandleFunc("/randomhymn", randomHymnHandler)
 	r.HandleFunc("/randomline", randomLineHandler)
-	r.HandleFunc("/s{searchText}", searchHandler)
 
 	restr := r.PathPrefix("/rest").Subrouter()
 	restr.HandleFunc("/", restMainHandler)
