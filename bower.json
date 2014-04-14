@@ -1,0 +1,31 @@
+{
+  "name": "granth.co",
+  "version": "0.0.0",
+  "homepage": "http://granth.co/",
+  "description": "Explore the holy book of the Sikh faith in 53 languages in an intuitive interface. Learn how to read and understand the Guru Granth Sahib.",
+  "keywords": [
+    "Sikh",
+    "scripture",
+    "guru",
+    "granth",
+    "sahib"
+  ],
+  "authors": [
+    "iqbalos"
+  ],
+  "license": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.16",
+    "angular-bootstrap": "~0.10.0",
+    "bootstrap-css-only": "~3.1.1",
+    "angular-route": "~1.2.16"
+  }
+}
