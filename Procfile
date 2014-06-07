@@ -1,1 +1,1 @@
-web: granthco
+web: granth.co
