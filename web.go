@@ -638,8 +638,6 @@ func setEnvironment() {
 	databaseString = fmt.Sprintf(databaseConnectionFormatString, databaseUsername, databasePassword,
 		databaseHost, databaseName)
 
-	//databaseString = localDatabaseString
-	fmt.Println(databaseString)
 }
 
 func readMainPageData() {
