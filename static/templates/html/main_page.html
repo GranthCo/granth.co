@@ -36,9 +36,12 @@
 
 
             <ul id="lt" class="nav nav-tabs left-tabs">
-            	<<< range .Data >>>
+            	<<< range $index, $results := .Data >>>
             		<<< if eq .Side "left" >>>
-            			<li ><a href="#<<< .Hash >>>" data-toggle="tab"><<< .Header >>></a></li>
+            			<li 
+            				<<< if eq $index 0 >>> class = "active" <<< end >>> 
+            			>
+            				<a href="#<<< .Hash >>>" data-toggle="tab"><<< .Header >>></a></li>
             		<<< end >>>
             	<<< end >>>
             </ul>
@@ -54,8 +57,8 @@
 
             <div class="tab-content">
               
-	            <<< range .Data >>>
-		            <div class="tab-pane" id="<<< .Hash >>>">
+	            <<< range $index, $results := .Data >>>
+		            <div class="tab-pane <<< if eq $index 0 >>> active <<< end >>> " id="<<< .Hash >>>">
 					<pre><b><<< .Header >>></b><br>
 					<<< .Description >>></pre>
 					</div>
