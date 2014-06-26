@@ -7,18 +7,17 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"github.com/russross/blackfriday"
 	"github.com/yvasiyarov/gorelic"
+	"hash/fnv"
 	"html/template"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
-	textTemplate "text/template"
-	//"regexp"
-	"github.com/russross/blackfriday"
-	//"io/ioutil"
 	"strings"
+	textTemplate "text/template"
 	"time"
 )
 
@@ -135,6 +134,8 @@ type Reply struct {
 }
 
 type MainPageLine struct {
+	Hash        string
+	Side        string
 	Header      string
 	Description string
 }
@@ -386,11 +387,19 @@ func returnHtmlMain(w http.ResponseWriter, template string) {
 	err := textTemplate.Must(textTemplate.New("base.html").
 		Delims("<<<", ">>>").
 		ParseFiles(templateLocationPrefix+"base.html",
-		templateLocationPrefix+"main_page.html")).ExecuteTemplate(w, "base", mainPageRequest)
+		templateLocationPrefix+"main_page.html")).ExecuteTemplate(w, "base",
+		mainPageRequest)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
 
+func renderReplyTemplate(w http.ResponseWriter, tmpl string, s *Reply) {
+
+	err := templates[tmpl].ExecuteTemplate(w, "base", s)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 //
@@ -566,14 +575,6 @@ var templates = map[string]*template.Template{
 		templateLocationPrefix+"about_page.html")),
 }
 
-func renderReplyTemplate(w http.ResponseWriter, tmpl string, s *Reply) {
-
-	err := templates[tmpl].ExecuteTemplate(w, "base", s)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
 //
 // -----------------------------------------------------------------------------
 //
@@ -656,12 +657,14 @@ func readMainPageData() {
 		begin := strings.Index(line, "|")
 
 		if begin == 0 {
-
 			if pageLine.Header != "" {
 				mainPageRequest.Data = append(mainPageRequest.Data, pageLine)
 			}
 
 			pageLine.Header = strings.TrimSpace(line[2:])
+			t := fnv.New32()
+			t.Write([]byte(pageLine.Header))
+			pageLine.Hash = strconv.Itoa(int(t.Sum32()))
 			pageLine.Description = ""
 
 		} else {
@@ -672,11 +675,22 @@ func readMainPageData() {
 		}
 	}
 
-	//fmt.Println(mainPageRequest)
-	//data, err := ioutil.ReadFile("data/mainpage.markup")
+	var total = len(mainPageRequest.Data)
 
-	//output := blackfriday.MarkdownBasic(data)
-	//fmt.Println("===========", string(output))
+	for i, mp := range mainPageRequest.Data {
+		if i < total/2 {
+			mainPageRequest.Data[i].Side = "left"
+		} else {
+			mainPageRequest.Data[i].Side = "right"
+		}
+
+		fmt.Println(mp.Hash, mp.Side)
+		fmt.Println("--")
+		fmt.Println(mp.Header)
+		fmt.Println("--")
+		fmt.Println(mp.Description)
+		fmt.Println("===")
+	}
 
 }
 
@@ -686,7 +700,7 @@ func main() {
 
 	http.Handle("/", setupRoutes())
 
-	runLogProcesses()
+	//runLogProcesses()
 
 	readMainPageData()
 
@@ -695,6 +709,8 @@ func main() {
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
 		http.ListenAndServe(":8888", nil)
+	} else {
+		fmt.Println("Could not start server. ", err)
 	}
 
 }
