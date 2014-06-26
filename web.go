@@ -677,19 +677,12 @@ func readMainPageData() {
 
 	var total = len(mainPageRequest.Data)
 
-	for i, mp := range mainPageRequest.Data {
+	for i, _ := range mainPageRequest.Data {
 		if i < total/2 {
 			mainPageRequest.Data[i].Side = "left"
 		} else {
 			mainPageRequest.Data[i].Side = "right"
 		}
-
-		fmt.Println(mp.Hash, mp.Side)
-		fmt.Println("--")
-		fmt.Println(mp.Header)
-		fmt.Println("--")
-		fmt.Println(mp.Description)
-		fmt.Println("===")
 	}
 
 }
