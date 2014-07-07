@@ -155,10 +155,11 @@ Set the following environment variables to override corresponding default values
 */
 var defaultDbUsername = "root"
 var defaultDbPassword = "password"
-var defaultDbHost = "localhost:3306"
+var defaultDbHost = "localhost"
+var defaultDbPort = "3306"
 var defaultDbName = "gurbanidb"
 
-var databaseConnectionFormatString = "%s:%s@tcp(%s)/%s"
+var databaseConnectionFormatString = "%s:%s@tcp(%s:%s)/%s"
 var databaseString = ""
 
 func databaseConnection() (*sql.DB, error) {
@@ -620,7 +621,7 @@ func setEnvironment() {
 	databaseUsername := os.Getenv("GRANTHCO_DATABASE_USERNAME")
 	databasePassword := os.Getenv("GRANTHCO_DATABASE_PASSWORD")
 	databaseHost := os.Getenv("GRANTHCO_DATABASE_HOST")
-	//databasePort := os.Getenv("GRANTHCO_DATABASE_PORT")
+	databasePort := os.Getenv("GRANTHCO_DATABASE_PORT")
 	databaseName := os.Getenv("GRANTHCO_DATABASE_NAME")
 
 	if databaseUsername == "" {
@@ -632,12 +633,15 @@ func setEnvironment() {
 	if databaseHost == "" {
 		databaseHost = defaultDbHost
 	}
+	if databasePort == "" {
+		databasePort = defaultDbPort
+	}
 	if databaseName == "" {
 		databaseName = defaultDbName
 	}
 
 	databaseString = fmt.Sprintf(databaseConnectionFormatString, databaseUsername, databasePassword,
-		databaseHost, databaseName)
+		databaseHost, databasePort, databaseName)
 
 }
 

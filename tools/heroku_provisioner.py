@@ -1,3 +1,4 @@
+#!/usr/bin/env python 
 
 import subprocess
 import sys
@@ -22,6 +23,7 @@ def main(argv):
 		if len(x) == 2:
 			key = x[0].strip()
 			val = x[1].strip()
+			print "Setting ", key
 			command = "heroku config:set " + key + "="+val+" --app " + secondary
 			subprocess.check_output(command.split())
 
