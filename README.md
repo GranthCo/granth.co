@@ -1,4 +1,7 @@
 [![Stories in Ready](https://badge.waffle.io/granthco/granth.co.png?label=ready&title=Ready)](https://waffle.io/granthco/granth.co)
+
+[![Build Status](https://drone.io/github.com/GranthCo/granth.co/status.png)](https://drone.io/github.com/GranthCo/granth.co/latest)
+
 Granth.co source code
 ======================
 This is the source code for http://granth.co 
