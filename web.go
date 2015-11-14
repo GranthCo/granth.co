@@ -450,7 +450,10 @@ func lineHandlerBase(req *http.Request) Reply {
 	begin := vars["begin"]
 	end := vars["end"]
 	fmt.Println(begin, end)
+	return rangedLineHandler(req, begin, end)
+}
 
+func rangedLineHandler(req *http.Request, begin, end string) Reply {
 	splitLangs := prepareLanguageString(req.URL.Query())
 	r := requestLines(splitLangs, []string{}, begin, end)
 	return r
@@ -533,7 +536,6 @@ func aboutHandler(res http.ResponseWriter, req *http.Request) {
 //
 
 func randomHymnHandler(res http.ResponseWriter, req *http.Request) {
-	rand.Seed(time.Now().UnixNano())
 	var hymn = rand.Intn(3621) // Number of shabads
 	fmt.Println(hymn)
 
@@ -545,7 +547,8 @@ func randomHymnHandler(res http.ResponseWriter, req *http.Request) {
 }
 
 func randomLineHandler(res http.ResponseWriter, req *http.Request) {
-	returnHtmlreply(res, "reply_display", lineHandlerBase(req))
+	line := strconv.Itoa(rand.Intn(60403)) // Number of lines
+	returnHtmlreply(res, "reply_display", rangedLineHandler(req, line, line))
 }
 
 func randomPageHandler(res http.ResponseWriter, req *http.Request) {
@@ -616,6 +619,7 @@ func runLogProcesses() {
 }
 
 func setEnvironment() {
+	rand.Seed(time.Now().UnixNano())
 
 	// Get the environment
 	databaseUsername := os.Getenv("GRANTHCO_DATABASE_USERNAME")
